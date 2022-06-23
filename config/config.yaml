@@ -1,0 +1,10 @@
+port: 5000
+database:
+  host: rm-wz94k0l69605b622nwo.mysql.rds.aliyuncs.com:3306
+  username: root
+  password: Chen1027
+  db: easy_cms
+redis:
+  host: 106.12.161.121:6379
+  password: pwd123
+  db: 0

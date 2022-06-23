@@ -1,0 +1,38 @@
+basePath: /v1
+host: 127.0.0.1:5000
+info:
+  contact:
+    email: support@swagger.io
+    name: lastly
+    url: http://www.swagger.io/support
+  description: 接口
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: easy-admin信息化
+  version: "1.0"
+paths:
+  /auth/graphic:
+    get:
+      consumes:
+      - application/json
+      description: 获取登录所需的图形验证码
+      produces:
+      - application/json
+      responses: {}
+      summary: 获取图形验证码
+      tags:
+      - 授权
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: 授权登录
+      produces:
+      - application/json
+      responses: {}
+      summary: 用户登录
+      tags:
+      - 授权
+swagger: "2.0"
