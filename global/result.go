@@ -26,8 +26,8 @@ func (r *Result) Success(data interface{}) {
 		data = gin.H{}
 	}
 	res := ResultCont{}
-	res.Code = 0
-	res.Msg = ""
+	res.Code = 200
+	res.Msg = "ok"
 	res.Data = data
 	r.Ctx.JSON(http.StatusOK, res)
 }

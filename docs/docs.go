@@ -38,7 +38,14 @@ const docTemplate = `{
                     "授权"
                 ],
                 "summary": "获取图形验证码",
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.GenerateGraphicCodeResponse"
+                        }
+                    }
+                }
             }
         },
         "/auth/login": {
@@ -55,6 +62,19 @@ const docTemplate = `{
                 ],
                 "summary": "用户登录",
                 "responses": {}
+            }
+        }
+    },
+    "definitions": {
+        "response.GenerateGraphicCodeResponse": {
+            "type": "object",
+            "properties": {
+                "baseImg": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
             }
         }
     }

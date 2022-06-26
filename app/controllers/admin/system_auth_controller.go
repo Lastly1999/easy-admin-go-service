@@ -3,9 +3,8 @@ package admin
 import (
 	"easy-admin-go-service/app/services/admin/system_auth_service"
 	"easy-admin-go-service/global"
-	"easy-admin-go-service/pkg/gorm"
-	"easy-admin-go-service/pkg/redis_store"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type AuthApi struct{}
@@ -19,11 +18,22 @@ type AuthApi struct{}
 // @Router /auth/login [post]
 func (authApi *AuthApi) LoginAction(ctx *gin.Context) {
 	rep := global.NewResult(ctx)
+	userName := rep.Ctx.GetHeader("username")
+	passWord := rep.Ctx.GetHeader("password")
+	smsUuid := rep.Ctx.GetHeader("smsuuid")
+	smsCode := rep.Ctx.GetHeader("smscode")
 	service := system_auth_service.Auth{
-		UserName: "pass",
+		UserName: userName,
+		PassWord: passWord,
+		SmsUuid:  smsUuid,
+		SmsCode:  smsCode,
 	}
-	ret := service.CheckLogin()
-	rep.Success(&ret)
+	err, checkLoginResponse := service.CheckLogin()
+	if err != nil {
+		rep.Error(http.StatusInternalServerError, err.Error())
+		return
+	}
+	rep.Success(&checkLoginResponse)
 }
 
 // GetGraphicCode 获取图形验证码
@@ -33,7 +43,14 @@ func (authApi *AuthApi) LoginAction(ctx *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Router /auth/graphic [get]
+// @Success 200 {object} response.GenerateGraphicCodeResponse
 func (authApi *AuthApi) GetGraphicCode(ctx *gin.Context) {
-	gorm.BaseDataBase.Table("sys_user")
-	redis_store.RedisDb.Time(ctx)
+	rep := global.NewResult(ctx)
+	auth := system_auth_service.Auth{}
+	err, resp := auth.GenerateGraphicCode()
+	if err != nil {
+		rep.Error(http.StatusInternalServerError, err.Error())
+		return
+	}
+	rep.Success(&resp)
 }

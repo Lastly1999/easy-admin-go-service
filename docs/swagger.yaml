@@ -1,4 +1,12 @@
 basePath: /v1
+definitions:
+  response.GenerateGraphicCodeResponse:
+    properties:
+      baseImg:
+        type: string
+      uuid:
+        type: string
+    type: object
 host: 127.0.0.1:5000
 info:
   contact:
@@ -20,7 +28,11 @@ paths:
       description: 获取登录所需的图形验证码
       produces:
       - application/json
-      responses: {}
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.GenerateGraphicCodeResponse'
       summary: 获取图形验证码
       tags:
       - 授权
