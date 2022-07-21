@@ -6,17 +6,21 @@ import (
 	"easy-admin-go-service/pkg/gorm"
 )
 
-type User struct {
+type UserService struct {
 	UserName string `json:"userName"`
 	PassWord string `json:"passWord"`
 }
 
-func (user *User) GetUser() (error, *response.GetUserInfoResponse) {
+type IUserService interface {
+	FindUserInfo() (*response.GetUserInfoResponse, error)
+}
+
+func (userService *UserService) FindUserInfo() (*response.GetUserInfoResponse, error) {
 	getUserInfoResponse := &response.GetUserInfoResponse{}
 	// 查询用户是否存在
-	err := gorm.BaseDataBase.Model(&system_models.SystemUserModel{}).Where("user_name = ? AND pass_word = ?", user.UserName, user.PassWord).First(getUserInfoResponse).Error
+	err := gorm.BaseDataBase.Model(&system_models.SystemUserModel{}).Where("user_name = ? AND pass_word = ?", userService.UserName, userService.PassWord).First(getUserInfoResponse).Error
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
-	return nil, getUserInfoResponse
+	return getUserInfoResponse, nil
 }

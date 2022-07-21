@@ -13,9 +13,9 @@ import (
 func InitRouters() *gin.Engine {
 	gin.ForceConsoleColor()
 	app := gin.Default()
+	app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	app.Use(middlewares.Cors())
 	app.Use(middlewares.JwtAuth())
-	app.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	apiV1 := app.Group("/v1")
 	userApi := admin.UserApi{}
 	apiV1.GET("/user", userApi.GetUser)

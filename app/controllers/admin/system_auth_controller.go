@@ -22,7 +22,7 @@ func (authApi *AuthApi) LoginAction(ctx *gin.Context) {
 	passWord := rep.Ctx.GetHeader("password")
 	smsUuid := rep.Ctx.GetHeader("smsuuid")
 	smsCode := rep.Ctx.GetHeader("smscode")
-	service := system_auth_service.Auth{
+	service := system_auth_service.AuthService{
 		UserName: userName,
 		PassWord: passWord,
 		SmsUuid:  smsUuid,
@@ -46,8 +46,27 @@ func (authApi *AuthApi) LoginAction(ctx *gin.Context) {
 // @Success 200 {object} response.GenerateGraphicCodeResponse
 func (authApi *AuthApi) GetGraphicCode(ctx *gin.Context) {
 	rep := global.NewResult(ctx)
-	auth := system_auth_service.Auth{}
+	auth := system_auth_service.AuthService{}
 	err, resp := auth.GenerateGraphicCode()
+	if err != nil {
+		rep.Error(http.StatusInternalServerError, err.Error())
+		return
+	}
+	rep.Success(&resp)
+}
+
+// GetRoleMenus 获取权限菜单
+// @Summary 获取权限菜单
+// @Description 获取用户关联的权限菜单
+// @Tags 授权
+// @Accept application/json
+// @Produce application/json
+// @Router /auth/menus [get]
+// @Success 200 {object} response.GenerateGraphicCodeResponse
+func (authApi *AuthApi) GetRoleMenus(ctx *gin.Context) {
+	rep := global.NewResult(ctx)
+	auth := system_auth_service.AuthService{}
+	err, resp := auth.FindUserRoleMenus()
 	if err != nil {
 		rep.Error(http.StatusInternalServerError, err.Error())
 		return

@@ -2,29 +2,37 @@ package system_auth_service
 
 import (
 	"easy-admin-go-service/app/services/admin/response"
+	"easy-admin-go-service/app/services/admin/system_role_service"
 	"easy-admin-go-service/app/services/admin/system_user_service"
 	"easy-admin-go-service/pkg/captcha"
 	"easy-admin-go-service/pkg/jwt"
 	"errors"
 	uuid "github.com/satori/go.uuid"
+	"log"
 	"strconv"
 )
 
-type Auth struct {
+type AuthService struct {
 	UserName string `json:"userName"`
 	PassWord string `json:"passWord"`
 	SmsUuid  string `json:"smsUuid"`
 	SmsCode  string `json:"smsCode"`
 }
 
+type IAuthService interface {
+	CheckLogin() (error, *response.CheckLoginResponse)
+	GenerateGraphicCode() (error, *response.GenerateGraphicCodeResponse)
+	FindUserRoleMenus() (error, *response.GetRoleMenusResponse)
+}
+
 // CheckLogin 验证登录
-func (auth *Auth) CheckLogin() (error, *response.CheckLoginResponse) {
-	userService := &system_user_service.User{
-		UserName: auth.UserName,
-		PassWord: auth.PassWord,
+func (authService *AuthService) CheckLogin() (error, *response.CheckLoginResponse) {
+	userService := &system_user_service.UserService{
+		UserName: authService.UserName,
+		PassWord: authService.PassWord,
 	}
+	resp, err := userService.FindUserInfo()
 	// 查询是否存在用户
-	err, resp := userService.GetUser()
 	if err != nil {
 		return err, nil
 	}
@@ -48,7 +56,7 @@ func (auth *Auth) CheckLogin() (error, *response.CheckLoginResponse) {
 }
 
 // GenerateGraphicCode 生成图形验证码 存储redis
-func (auth *Auth) GenerateGraphicCode() (error, *response.GenerateGraphicCodeResponse) {
+func (authService *AuthService) GenerateGraphicCode() (error, *response.GenerateGraphicCodeResponse) {
 	// 生成图形验证码
 	answer, item := captcha.GenerateCaptchaHandler()
 	// 生成uuid
@@ -64,4 +72,15 @@ func (auth *Auth) GenerateGraphicCode() (error, *response.GenerateGraphicCodeRes
 		BaseImg: item.EncodeB64string(),
 	}
 	return nil, generateGraphicCodeResponse
+}
+
+// FindUserRoleMenus 获取用户权限菜单信息
+func (authService *AuthService) FindUserRoleMenus() (error, *response.GetRoleMenusResponse) {
+	service := system_role_service.RoleService{}
+	err, roleIds := service.GetUserRoleIds(1)
+	log.Panicln(roleIds)
+	if err != nil {
+		return err, nil
+	}
+	return nil, nil
 }

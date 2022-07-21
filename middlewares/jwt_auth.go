@@ -9,6 +9,17 @@ import (
 func JwtAuth() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		auth := context.Request.Header.Get("Authorization")
+		whiteRouter := []string{
+			"/v1/auth/login",
+			"/v1/auth/graphic",
+			"/swagger/index.html",
+		}
+		for _, v := range whiteRouter {
+			if v == context.Request.URL.Path {
+				// 白名单之内 放行
+				context.Next()
+			}
+		}
 		if len(auth) == 0 {
 			context.Abort()
 			context.String(http.StatusOK, "未登录⽆权限")

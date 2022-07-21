@@ -14,5 +14,7 @@ func InitAuthRoutes(router *gin.RouterGroup) {
 		authRoutes.GET("/graphic", authApi.GetGraphicCode)
 		// 授权登录
 		authRoutes.POST("/login", authApi.LoginAction)
+		// 获取授权菜单
+		authRoutes.GET("/menus", authApi.GetRoleMenus)
 	}
 }
